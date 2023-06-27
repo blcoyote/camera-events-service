@@ -1,0 +1,9 @@
+fastapi==0.98.*
+uvicorn[standard]==0.22.*
+pydantic[dotenv]==1.10.*
+requests==2.31.*
+loguru==0.7.*
+python-multipart==0.0.6
+python-jose[cryptography]==3.3.*
+passlib==1.7.*
+SQLAlchemy==2.0.*
