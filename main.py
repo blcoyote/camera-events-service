@@ -4,7 +4,7 @@ from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from controllers import event_controller
-from lib.auth import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token, get_current_active_user,  get_fake_users_db
+from lib.auth import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token, get_current_active_user
 from lib.settings import get_settings
 from loguru import logger
 from lib.websockets import get_connection_manager
@@ -42,9 +42,10 @@ def app_config():
 
 @app.post("/token", response_model=Token)
 async def login_for_access_token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(database.get_db)
 ):
-    user = authenticate_user(get_fake_users_db(), form_data.username, form_data.password)
+    user = authenticate_user(db, form_data.username, form_data.password)
+    
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -57,7 +58,7 @@ async def login_for_access_token(
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
-@app.get("/users/me")
+@app.get("/users/me", response_model=UserGet)
 async def read_users_me(current_user: Annotated[User, Depends(get_current_active_user)]):
     return current_user
 
