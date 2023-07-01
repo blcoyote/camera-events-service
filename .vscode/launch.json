@@ -12,6 +12,8 @@
             "args": [
                 "main:app",
                 "--reload",
+                "--host",
+                "0.0.0.0",
                 "--env-file",
                 ".env.local"
             ],

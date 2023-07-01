@@ -6,4 +6,5 @@ loguru==0.7.*
 python-multipart==0.0.6
 python-jose[cryptography]==3.3.*
 passlib==1.7.*
+bcrypt==3.2.*
 SQLAlchemy==2.0.*
