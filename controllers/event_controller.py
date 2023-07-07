@@ -28,5 +28,5 @@ async def read_event(event_id: str):
 
 @router.get("/{event_id}/snapshot.jpg", status_code=200)
 async def read_event_snapshot(event_id: str):
-    return StreamingResponse(io.BytesIO(get_snapshot(event_id)), media_type="image/png") 
+    return StreamingResponse(io.BytesIO(get_snapshot(event_id)), media_type="image/jpg") 
 
