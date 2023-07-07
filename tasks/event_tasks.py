@@ -28,3 +28,10 @@ def get_thumbnail(id: str) -> CameraEvent:
     response.raise_for_status()
     out = pydantic.parse_obj_as(CameraEvent, response.json())
     return out
+
+def get_snapshot(id: str) -> bytes:
+    url = f"{get_settings().frigate_baseurl}/api/events/{id}/snapshot.jpg"
+
+    response = requests.get(url).content
+    
+    return response
