@@ -10,8 +10,8 @@
     },
     "python.analysis.extraPaths": [
         "",
-        "c:\\Users\\blc\\.vscode-insiders\\extensions\\joedevivo.vscode-circuitpython-0.1.20-win32-x64\\stubs",
-        "c:\\Users\\blc\\AppData\\Roaming\\Code - Insiders\\User\\globalStorage\\joedevivo.vscode-circuitpython\\bundle\\20230701\\adafruit-circuitpython-bundle-py-20230701\\lib"
+        "c:\\Users\\blc\\.vscode\\extensions\\joedevivo.vscode-circuitpython-0.1.20-win32-x64\\stubs",
+        "c:\\Users\\blc\\AppData\\Roaming\\Code\\User\\globalStorage\\joedevivo.vscode-circuitpython\\bundle\\20230707\\adafruit-circuitpython-bundle-py-20230707\\lib"
     ],
     "circuitpython.board.version": null,
     "sqltools.useNodeRuntime": true
