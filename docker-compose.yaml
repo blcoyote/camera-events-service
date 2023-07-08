@@ -9,8 +9,6 @@ services:
         network_mode: web
         container_name: cameraevents
         build: .
-        # env_file:
-        #   - .env
         environment:
             - MAX_WORKERS=1
             - UVICORN_APP_VERSION="0.0.2"
