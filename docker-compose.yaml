@@ -4,8 +4,6 @@ services:
         volumes:
             - '/volume1/docker/cameraevents/userdb.db:/app/userdb.db'
             - '/volume1/docker/cameraevents/logs/:/app/logs/'
-        ports:
-            - '18088:80'
         network_mode: web
         container_name: cameraevents
         build: .
