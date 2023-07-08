@@ -13,3 +13,8 @@ services:
         #   - .env
         environment:
             - MAX_WORKERS=1
+            - UVICORN_APP_VERSION="0.0.2"
+            - UVICORN_FRIGATE_BASEURL=$UVICORN_FRIGATE_BASEURL
+            - UVICORN_SERET_KEY=$UVICORN_SERET_KEY
+            - UVICORN_DATABASE_URL=$UVICORN_DATABASE_URL
+            - UVICORN_DOCS_URL=$UVICORN_DOCS_URL
