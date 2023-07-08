@@ -3,6 +3,7 @@ services:
     cameraevents:
         volumes:
             - '/volume1/docker/cameraevents/userdb.db:/app/userdb.db'
+            - '/volume1/docker/cameraevents/logs/:/app/logs/'
         ports:
             - '18088:80'
         network_mode: web
@@ -10,3 +11,5 @@ services:
         image: 'cameraevents:latest'
         env_file:
           - .env
+        environment:
+            - MAX_WORKERS=1

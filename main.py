@@ -1,6 +1,7 @@
+import asyncio
 from datetime import datetime, timedelta
 from typing import Annotated
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, HTTPException, status, BackgroundTasks
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from controllers import event_controller, user_controller
@@ -11,13 +12,12 @@ from lib.websockets import get_connection_manager
 from sqlalchemy.orm import Session
 from models.token import Token
 from database import schema, database
+from tasks.event_polling import poll_for_new_events
 
 schema.Base.metadata.create_all(bind=database.engine)
 
-logger.remove(0)
-logger.add(f"./log/apilog_{datetime.now().strftime('%Y-%m-%d')}.log", rotation="1 day",
+logger.add(f"./logs/apilog_{datetime.now().strftime('%Y-%m-%d')}.log", rotation="1 day",
            colorize=False, format="{time:YYYY-MM-DD HH:mm:ss.SSS} | {level} | <level>{message}</level>")
-
 
 app = FastAPI(
     title=get_settings().app_name, 
@@ -26,7 +26,6 @@ app = FastAPI(
     docs_url=get_settings().docs_url, # Disable docs (Swagger UI)
     redoc_url=None, # Disable redoc
     )
-
 app.include_router(event_controller.router)
 app.include_router(user_controller.router)
 app.add_middleware(
@@ -36,12 +35,19 @@ app.add_middleware(
     allow_methods=['*'],
     allow_headers=['*'],
 )
-
+logger.info("Starting Frigate API...")
 
 manager = get_connection_manager()
 
+background_tasks = BackgroundTasks()
+
+@app.on_event('startup')
+async def app_startup():
+    asyncio.create_task(poll_for_new_events())
+
+
 @app.get("/application-configuration")
-def app_config():
+async def app_config():
     return {}
 
 @app.post("/token", response_model=Token)
