@@ -1,5 +1,6 @@
 from typing import List, Optional
 from pydantic import BaseModel
+from enum import Enum
 
 class CameraEvent(BaseModel):
     area: Optional[str] = None
@@ -32,3 +33,18 @@ class CameraEventQueryParams(BaseModel):
     has_clip:	Optional[int]	#Filter to events that have clips (0 or 1)
     include_thumbnails:	Optional[int]	#Include thumbnails in the response (0 or 1)
     in_progress:	Optional[int]	#Limit to events in progress (0 or 1)
+
+
+class WsEventType(Enum):
+    MOVEMENT = "movement"
+    ADDMORE = "here"
+
+class CameraNotification(BaseModel):
+    id: str
+    camera: str
+
+class WebsocketEvent(BaseModel):
+    type: WsEventType
+    content: CameraNotification
+
+

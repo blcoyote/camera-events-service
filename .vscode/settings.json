@@ -8,6 +8,4 @@
     "python.analysis.diagnosticSeverityOverrides": {
         "reportMissingModuleSource": "none"
     },
-    "circuitpython.board.version": null,
-    "sqltools.useNodeRuntime": true
 }

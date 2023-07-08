@@ -8,7 +8,7 @@ services:
             - '18088:80'
         network_mode: web
         container_name: cameraevents
-        image: 'cameraevents:latest'
+        build: .
         env_file:
           - .env
         environment:

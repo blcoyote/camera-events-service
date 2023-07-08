@@ -7,6 +7,8 @@ def get_connection_manager():
 
 class ConnectionManager:
     def __init__(self):
+
+        #Change to a list of objects to keep usernames and possibly subscriptions
         self.active_connections: list[WebSocket] = []
 
     async def connect(self, websocket: WebSocket):

@@ -1,7 +1,6 @@
 import io
-from typing import List, Optional
-from fastapi import APIRouter, Depends
-from loguru import logger
+from typing import List
+from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
 from lib.websockets import get_connection_manager
 from tasks.event_tasks import get_events, get_snapshot
 from models.event_model import CameraEvent, CameraEventQueryParams
@@ -16,7 +15,6 @@ router = APIRouter(
     dependencies=[Depends(get_current_active_user)],
     responses={404: {"description": "Not found"}},
 )
-
 
 @router.get("/" , response_model=List[CameraEvent], status_code=200, )
 async def read_events(params: CameraEventQueryParams = Depends()):

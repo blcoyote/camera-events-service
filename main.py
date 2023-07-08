@@ -1,11 +1,11 @@
 import asyncio
 from datetime import datetime, timedelta
 from typing import Annotated
-from fastapi import Depends, FastAPI, HTTPException, status, BackgroundTasks
+from fastapi import Depends, FastAPI, HTTPException, WebSocket, WebSocketDisconnect, status, BackgroundTasks
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from controllers import event_controller, user_controller
-from lib.auth import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token
+from lib.auth import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token, get_current_active_user, get_current_user
 from lib.settings import get_settings
 from loguru import logger
 from lib.websockets import get_connection_manager
@@ -68,3 +68,30 @@ async def login_for_access_token(
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
+
+
+
+@app.websocket("/ws/{token}")
+async def websocket_endpoint(websocket: WebSocket, token: str, db: Session = Depends(database.get_db)):
+    user: schema.User
+    try:
+        user = await get_current_user(token, db)
+        logger.info(f"User {user.username} connected to websocket")
+    except Exception as e:
+        logger.info(f"Invalid token: {token}, exception: {e}")
+        await websocket.close(code=401, reason="Invalid token")
+        raise(HTTPException(status_code=401, detail="Invalid token"))
+
+    await manager.connect(websocket)
+
+    try:
+        while True:
+            data = await websocket.receive_text()
+            logger.info(f"Received data from user: {data}")
+
+            #TODO: do subscription magic?
+
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+        await manager.broadcast(f"Hello everyone")
+  
