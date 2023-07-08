@@ -25,9 +25,9 @@ class CameraEventQueryParams(BaseModel):
     before:	Optional[int]	#Epoch time
     after:	Optional[int]	#Epoch time
     cameras:	Optional[str]	#separated list of cameras
-    labels:	Optional[List[str]]	#separated list of labels
-    zones:	Optional[List[str]]	#separated list of zones
-    limit:	Optional[List[int]] = 20	#Limit the number of events returned
+    labels:	Optional[str]	#separated list of labels
+    zones:	Optional[str]	#separated list of zones
+    limit:	Optional[int] = 20	#Limit the number of events returned
     has_snapshot:	Optional[int]	#Filter to events that have snapshots (0 or 1)
     has_clip:	Optional[int]	#Filter to events that have clips (0 or 1)
     include_thumbnails:	Optional[int]	#Include thumbnails in the response (0 or 1)

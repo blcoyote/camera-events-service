@@ -1,10 +1,10 @@
 import io
-from typing import List
+from typing import List, Optional
 from fastapi import APIRouter, Depends
 from loguru import logger
 from lib.websockets import get_connection_manager
 from tasks.event_tasks import get_events, get_snapshot
-from models.event_model import CameraEvent
+from models.event_model import CameraEvent, CameraEventQueryParams
 from lib.auth import get_current_active_user
 from starlette.responses import StreamingResponse
 
@@ -19,8 +19,8 @@ router = APIRouter(
 
 
 @router.get("/" , response_model=List[CameraEvent], status_code=200, )
-async def read_events():
-    return get_events()
+async def read_events(params: CameraEventQueryParams = Depends()):
+    return get_events(params)
 
 @router.get("/{event_id}" , response_model=CameraEvent, status_code=200)
 async def read_event(event_id: str):

@@ -1,0 +1,12 @@
+version: '3.3'
+services:
+    cameraevents:
+        volumes:
+            - '/volume1/docker/cameraevents/userdb.db:/app/userdb.db'
+        ports:
+            - '18088:80'
+        network_mode: web
+        container_name: cameraevents
+        image: 'cameraevents:latest'
+        env_file:
+          - .env
