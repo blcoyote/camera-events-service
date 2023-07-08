@@ -18,7 +18,15 @@ logger.remove(0)
 logger.add(f"./log/apilog_{datetime.now().strftime('%Y-%m-%d')}.log", rotation="1 day",
            colorize=False, format="{time:YYYY-MM-DD HH:mm:ss.SSS} | {level} | <level>{message}</level>")
 
-app = FastAPI(title=get_settings().app_name, version=get_settings().app_version, debug=False)
+
+app = FastAPI(
+    title=get_settings().app_name, 
+    version=get_settings().app_version, 
+    debug=False,
+    docs_url=get_settings().docs_url, # Disable docs (Swagger UI)
+    redoc_url=None, # Disable redoc
+    )
+
 app.include_router(event_controller.router)
 app.include_router(user_controller.router)
 app.add_middleware(
