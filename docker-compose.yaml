@@ -6,7 +6,7 @@ services:
             - '/volume1/docker/cameraevents/logs/:/app/logs/'
         network_mode: web
         container_name: cameraevents
-        image: cameraevents:latest
+        image: ghcr.io/blcoyote/camera-events-service:latest
         # env_file:
         #     - .env
         environment:
