@@ -1,10 +1,12 @@
 import asyncio
 from loguru import logger
 from datetime import datetime, timedelta
+from firebase.firebase import send_topic_push
 from tasks.event_tasks import get_events
 from lib.websockets import get_connection_manager
 from models.event_model import CameraEventQueryParams, CameraNotification, WsEventType, WebsocketEvent
 
+POLLING_INTERVAL = 6000
 
 manager = get_connection_manager()
 
@@ -13,20 +15,21 @@ async def poll_for_new_events():
     while True:
         logger.info("Polling for new events...")
         params = CameraEventQueryParams()
-        aftertime = datetime.now()- timedelta(seconds = 60)
+        aftertime = datetime.now()- timedelta(seconds = POLLING_INTERVAL)
         params.after=int(aftertime.timestamp())
+        params.limit=2000
 
         events = get_events(params)
 
         if len(events) > 0:
-            logger.info(f"Found {len(events)} events. Pushing to websocket clients")
+            logger.info(f"Found {len(events)} events. Pushing to clients")
             for event in events:
-                
-                cameraNotification = CameraNotification(id=event.id, camera=event.camera)
-                wsEvent = WebsocketEvent(type=WsEventType.MOVEMENT, content=cameraNotification)
-                try:
-                    await manager.broadcast(wsEvent.json())
-                except Exception as e:
-                    logger.error(f"Error broadcasting event to websocket clients: {e}")
 
-        await asyncio.sleep(60)
+
+                try:
+                    #await manager.broadcast(wsEvent.json())
+                    send_topic_push(event)
+                except Exception as e:
+                    logger.error(f"Error sending event to firebase: {e}")
+
+        await asyncio.sleep(POLLING_INTERVAL)

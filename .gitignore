@@ -4,3 +4,5 @@ logs
 __pycache__/
 *.pyc
 .vscode/settings.json
+serviceAccountKey.json
+*.pyc
