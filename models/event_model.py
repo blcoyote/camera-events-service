@@ -3,8 +3,8 @@ from pydantic import BaseModel
 from enum import Enum
 
 class CameraEvent(BaseModel):
-    area: Optional[str] = None
-    box: Optional[str] = None
+    area: Optional[int] = None
+    box:  Optional[List[int]] = []
     camera: str
     end_time: Optional[int] = None
     false_positive: Optional[str] = None
@@ -14,7 +14,7 @@ class CameraEvent(BaseModel):
     label: str
     plus_id: Optional[str] = None
     ratio: Optional[str] = None
-    region: Optional[str] = None
+    region: Optional[List[int]] = []
     retain_indefinitely: bool
     start_time: int
     sub_label: Optional[str] = None

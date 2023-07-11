@@ -2,7 +2,7 @@ import io
 from typing import List
 from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
 from lib.websockets import get_connection_manager
-from tasks.event_tasks import get_events, get_snapshot
+from tasks.event_tasks import get_events, get_snapshot, get_event
 from models.event_model import CameraEvent, CameraEventQueryParams
 from lib.auth import get_current_active_user
 from starlette.responses import StreamingResponse
@@ -22,7 +22,7 @@ async def read_events(params: CameraEventQueryParams = Depends()):
 
 @router.get("/{event_id}" , response_model=CameraEvent, status_code=200)
 async def read_event(event_id: str):
-    return get_events(id=event_id)
+    return get_event(id=event_id)
 
 @router.get("/{event_id}/snapshot.jpg", status_code=200)
 async def read_event_snapshot(event_id: str):
