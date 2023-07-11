@@ -1,4 +1,7 @@
 from functools import lru_cache
+import json
+import os
+import base64
 import firebase_admin
 from firebase_admin import credentials, messaging
 from loguru import logger
@@ -6,7 +9,9 @@ from loguru import logger
 from models.event_model import CameraEvent
 
 firebase_app = None
-firebase_cred = credentials.Certificate("./serviceAccountKey.json")
+creds_dict = json.loads(base64.b64decode(os.getenv("UVICORN_FIREBASE_CREDENTIALS")))
+
+firebase_cred = credentials.Certificate(creds_dict)
 topic = "cameraevents"
 
 @lru_cache()
