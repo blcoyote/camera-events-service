@@ -26,3 +26,17 @@ def create_user(db: Session, user: user.UserCreate):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+def create_refresh_token(db: Session, token: str, username: str):
+    db_token = schema.RefreshToken(token=token, username=username)
+    db.add(db_token)
+    db.commit()
+    db.refresh(db_token)
+    return db_token
+
+def find_refresh_token(db: Session, token: str):
+    return db.query(schema.RefreshToken).filter(schema.RefreshToken.token == token).first()
+
+def remove_refresh_token(db: Session, token: str):
+    db.query(schema.RefreshToken).filter(schema.RefreshToken.token == token).delete()
+    db.commit()

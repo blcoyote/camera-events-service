@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from controllers import event_controller, user_controller
 from firebase.firebase import get_firebase_app, subscribe_topic, send_topic_push
-from lib.auth import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token, get_current_user
+from lib.auth import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token, get_current_user, refresh_access_token
 from lib.settings import get_settings
 from loguru import logger
 from lib.websockets import get_connection_manager
@@ -65,10 +65,22 @@ async def login_for_access_token(
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
+    access_token = create_access_token(db, data={"sub": user.username}, expires_delta=access_token_expires)
+    return {"access_token": access_token[0], "refresh_token":access_token[1], "token_type": "bearer"}
+
+
+@app.post("/token/refresh", response_model=Token)
+async def refresh_token(
+    token: str, 
+    user: str,
+    db: Session = Depends(database.get_db)
+    ):
+    
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = refresh_access_token(db, refresh_token=token,
+        data={"sub": user}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token[0], "refresh_token":access_token[1], "token_type": "bearer"}
 
 
 @app.post("/fcm")

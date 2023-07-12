@@ -1,14 +1,15 @@
 from fastapi import WebSocket
 from functools import lru_cache
 
+
 @lru_cache()
 def get_connection_manager():
     return ConnectionManager()
 
+
 class ConnectionManager:
     def __init__(self):
-
-        #Change to a list of objects to keep usernames and possibly subscriptions
+        # Change to a list of objects to keep usernames and possibly subscriptions
         self.active_connections: list[WebSocket] = []
 
     async def connect(self, websocket: WebSocket):
