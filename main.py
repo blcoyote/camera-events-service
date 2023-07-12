@@ -69,7 +69,7 @@ async def login_for_access_token(
     return {"access_token": access_token[0], "refresh_token":access_token[1], "token_type": "bearer"}
 
 
-@app.post("/refresh", response_model=Token)
+@app.post("/token/refresh", response_model=Token)
 async def refresh_token(
     token: str, 
     user: str,
