@@ -16,3 +16,9 @@ class User(Base):
 
 
 
+class  RefreshToken(Base):
+    __tablename__ = "refresh_tokens"
+
+    id = Column(Integer, primary_key=True, index=True, nullable=False)
+    token = Column(String, unique=True, index=True, nullable=False)
+    username = Column(String, index=True, nullable=False)

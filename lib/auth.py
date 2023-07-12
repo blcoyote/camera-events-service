@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import secrets
 from typing import Annotated, Union
 from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
@@ -39,7 +40,7 @@ def authenticate_user(db, username: str, password: str):
     return user
 
 
-def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None):
+def create_access_token(db, data: dict, expires_delta: Union[timedelta, None] = None):
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
@@ -47,7 +48,31 @@ def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None
         expire = datetime.utcnow() + timedelta(minutes=15)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+    refresh_token = secrets.token_hex(32)
+    crud.create_refresh_token(db, refresh_token, to_encode.get("sub"))
+    return encoded_jwt, refresh_token
+
+def refresh_access_token(db, refresh_token: str, data: dict, expires_delta: Union[timedelta, None] = None):
+
+    found = crud.find_refresh_token(db, refresh_token)
+    if found is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid refresh token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    if found.username != data.get("sub"):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid refresh token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    new_token = create_access_token(db, data, expires_delta)
+    crud.remove_refresh_token(db, refresh_token)
+    return new_token
+
+        
 
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(database.get_db)):
