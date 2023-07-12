@@ -56,12 +56,15 @@ def refresh_access_token(db, refresh_token: str, data: dict, expires_delta: Unio
 
     found = crud.find_refresh_token(db, refresh_token)
     if found is None:
+        logger.info("Invalid refresh token attempted")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid refresh token",
             headers={"WWW-Authenticate": "Bearer"},
         )
+        
     if found.username != data.get("sub"):
+        logger.info("correct refreshtoken but invalid user attempted")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid refresh token",
