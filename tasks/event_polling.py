@@ -6,7 +6,7 @@ from tasks.event_tasks import get_events
 from lib.websockets import get_connection_manager
 from models.event_model import CameraEventQueryParams, CameraNotification, WsEventType, WebsocketEvent
 
-POLLING_INTERVAL = 60
+POLLING_INTERVAL = 30
 
 manager = get_connection_manager()
 
