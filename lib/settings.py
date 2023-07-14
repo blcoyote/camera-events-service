@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import List
 from pydantic import BaseSettings
 from loguru import logger
 import os
@@ -15,6 +16,7 @@ class Settings(BaseSettings):
     frigate_baseurl: str = os.getenv("UVICORN_FRIGATE_BASEURL", "")
     secret_key: str = os.getenv("UVICORN_SECRET_KEY", "")
     sqlalchemy_database_url: str = os.getenv("UVICORN_DATABASE_URL", "")
+    cameras: List[str] = ['gavl_vest', 'garage', 'gavl_oest', 'have', 'rpiCamera','stuen','koekken','reserve',]
     
 
 

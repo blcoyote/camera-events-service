@@ -34,7 +34,7 @@ def send_topic_push(event: CameraEvent):
     
     message = messaging.Message(
         notification=messaging.Notification(
-        title=f'Person set i camera: {event.camera}',
+        title=f'Person set i kamera: {event.camera}',
         body=f'id: {event.id}'
         ),
         topic=topic,
