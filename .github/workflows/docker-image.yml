@@ -39,6 +39,14 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  remove-old-artifacts:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
       - name: Delete Package Versions
         uses: actions/delete-package-versions@v4.1.1
         with:
