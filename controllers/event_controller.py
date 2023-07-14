@@ -2,13 +2,10 @@ import io
 from typing import List
 from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
 from lib.settings import get_settings
-from lib.websockets import get_connection_manager
 from tasks.event_tasks import get_clip, get_events, get_latest, get_snapshot, get_event
 from models.event_model import CameraEvent, CameraEventQueryParams
 from lib.auth import get_current_active_user
 from starlette.responses import StreamingResponse
-
-manager = get_connection_manager()
 
 router = APIRouter(
     prefix="/events",

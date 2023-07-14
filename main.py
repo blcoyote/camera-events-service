@@ -9,12 +9,11 @@ from firebase.firebase import get_firebase_app, subscribe_topic, send_topic_push
 from lib.auth import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token, get_current_user, refresh_access_token
 from lib.settings import get_settings
 from loguru import logger
-from lib.websockets import get_connection_manager
 from sqlalchemy.orm import Session
 from models.user import User
 from models.token import Token
-from database import schema, database
-from tasks.event_polling import poll_for_new_events
+from database import crud, schema, database
+from tasks.event_polling import poll_for_new_events, check_for_stale_fcmtokens
 
 schema.Base.metadata.create_all(bind=database.engine)
 
@@ -39,13 +38,14 @@ app.add_middleware(
 )
 logger.info("Starting Frigate API...")
 firebase_App = get_firebase_app()
-manager = get_connection_manager()
+
 
 background_tasks = BackgroundTasks()
 
 @app.on_event('startup')
 async def app_startup():
     asyncio.create_task(poll_for_new_events())
+    asyncio.create_task(check_for_stale_fcmtokens())
 
 
 @app.get("/application-configuration")
@@ -83,40 +83,25 @@ async def refresh_token(
     return {"access_token": access_token[0], "refresh_token":access_token[1], "token_type": "bearer"}
 
 
-@app.post("/fcm")
-async def register_fcm(token: str,current_user: Annotated[User, Depends(get_current_user)]):
+@app.post("/fcm", status_code=200)
+async def register_fcm(token: str, current_user: Annotated[User, Depends(get_current_user)], db: Session = Depends(database.get_db)):
+
     try:
-        subscribe_topic(token)
+        existing_token = crud.find_fcm_token(db=db, fcm_token=token)
+
+        if existing_token != None:
+            logger.info(f"FCM token already registered for user {current_user.username}")
+
+            if existing_token.lastUploadedEpoch < int(datetime.now().timestamp()) - 60*60*24*7*2:
+                subscribe_topic(token)
+                crud.update_fcm_token_last_uploaded(db=db, fcm_token=token)
+                logger.info(f"FCM token last uploaded more than 2 weeks ago. Re-subscribing to topic")
+
+        else:
+            logger.info(f"Registering FCM token for user {current_user.username}")
+            subscribe_topic(token)
+            crud.store_fcm_token(db=db, fcm_token=token)
+            
     except Exception as e:
-        logger.error(f"Failed to subscribe to FCM topic: {e}")
+        logger.error(f"Failed to handle fcm token: {e}")
 
-
-
-  
-
-
-
-@app.websocket("/ws/{token}")
-async def websocket_endpoint(websocket: WebSocket, token: str, db: Session = Depends(database.get_db)):
-    user: schema.User
-    try:
-        user = await get_current_user(token, db)
-        logger.info(f"User {user.username} connected to websocket")
-    except Exception as e:
-        logger.info(f"Invalid token: {token}, exception: {e}")
-        await websocket.close(code=401, reason="Invalid token")
-        raise(HTTPException(status_code=401, detail="Invalid token"))
-
-    await manager.connect(websocket)
-
-    try:
-        while True:
-            data = await websocket.receive_text()
-            logger.info(f"Received data from user: {data}")
-
-            #TODO: do subscription magic?
-
-    except WebSocketDisconnect:
-        manager.disconnect(websocket)
-        await manager.broadcast(f"Hello everyone")
-  
