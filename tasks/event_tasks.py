@@ -40,6 +40,12 @@ def get_snapshot(id: str) -> bytes:
     response = requests.get(url).content
     return response
 
+def get_latest(camera: str) -> bytes:
+    url = f"{get_settings().frigate_baseurl}/api/{camera}/latest.jpg"
+    response = requests.get(url).content
+    return response
+
+
 def get_clip(id: str) -> bytes:
     url = f"{get_settings().frigate_baseurl}/api/events/{id}/clip.mp4"
     response = requests.get(url).content
