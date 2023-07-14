@@ -39,3 +39,15 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+      - name: Delete Package Versions
+        uses: actions/delete-package-versions@v4.1.1
+        with:
+          package-name: camera-events-service
+          # Type of package. Can be one of container, maven, npm, nuget, or rubygems.
+          package-type: container
+          # Number of versions to delete starting with the oldest version. Defaults to 1.
+          num-old-versions-to-delete: 0
+          # Number of versions to keep starting with the latest version By default keeps no version. To delete all versions set this as 0.
+          min-versions-to-keep: 2
+          # Regex pattern for package versions to ignore. Defaults to delete all versions.
+          token: # optional, default is ${{ github.token }}
