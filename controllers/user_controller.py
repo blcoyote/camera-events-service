@@ -1,13 +1,11 @@
 from typing import Annotated, List
 from fastapi import APIRouter, Depends, HTTPException
 from loguru import logger
-from lib.websockets import get_connection_manager
 from models.user import User, UserCreate, UserGet
 from database import schema, crud, database
 from lib.auth import get_current_active_user
 from sqlalchemy.orm import Session
 
-manager = get_connection_manager()
 
 router = APIRouter(
     prefix="/users",
