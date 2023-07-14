@@ -1,3 +1,4 @@
+from time import time
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from models import user
@@ -39,4 +40,21 @@ def find_refresh_token(db: Session, token: str):
 
 def remove_refresh_token(db: Session, token: str):
     db.query(schema.RefreshToken).filter(schema.RefreshToken.token == token).delete()
+    db.commit()
+
+def store_fcm_token(db: Session, fcm_token:str):
+    db_token = schema.FcmToken(fcmToken=fcm_token, lastUploadedEpoch=int(time.time()))
+    db.add(db_token)
+    db.commit()
+    db.refresh(db_token)
+    return db_token
+
+def find_fcm_token(db: Session, fcm_token:str):
+    return db.query(schema.FcmToken).filter(schema.FcmToken.fcmToken == fcm_token).first()
+
+def get_stale_fcm_tokens(db: Session):
+    return db.query(schema.FcmToken).filter(schema.FcmToken.lastUploadedEpoch < int(time.time()) - 60*60*24*7*30).all()
+
+def delete_stale_fcm_tokens(db: Session):
+    db.query(schema.FcmToken).filter(schema.FcmToken.lastUploadedEpoch < int(time.time()) - 60*60*24*7*30).delete()
     db.commit()

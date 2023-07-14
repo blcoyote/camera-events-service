@@ -13,7 +13,7 @@ manager = get_connection_manager()
 async def poll_for_new_events():
     aftertime = datetime.now()- timedelta(seconds = POLLING_INTERVAL)
     while True:
-        logger.info(f"Polling for new events from {aftertime}")
+        #logger.info(f"Polling for new events from {aftertime}")
         params = CameraEventQueryParams()
         params.after=int(aftertime.timestamp())
         params.limit=200
