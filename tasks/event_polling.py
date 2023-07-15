@@ -1,11 +1,12 @@
 import asyncio
+from typing import List
 from loguru import logger
 from datetime import datetime, timedelta
 from database import database
 from database.crud import delete_stale_fcm_tokens, get_stale_fcm_tokens
 from firebase.firebase import send_topic_push
 from tasks.event_tasks import get_events
-from models.event_model import CameraEventQueryParams, CameraNotification, WsEventType, WebsocketEvent
+from models.event_model import CameraEvent, CameraEventQueryParams, CameraNotification, WsEventType, WebsocketEvent
 
 POLLING_INTERVAL = 30
 
@@ -18,9 +19,12 @@ async def poll_for_new_events():
         params.limit=200
 
         aftertime = datetime.now() #next run
+        events: List[CameraEvent] = []
 
-        events = get_events(params)
-        
+        try:
+            events = get_events(params)
+        except Exception as e:
+            logger.error(f"Error getting events from api: {e}")
 
         if len(events) > 0:
             logger.info(f"Found {len(events)} events. Pushing to clients")

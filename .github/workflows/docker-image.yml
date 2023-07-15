@@ -53,4 +53,4 @@ jobs:
           package-name: camera-events-service
           package-type: container
           num-old-versions-to-delete: 0
-          min-versions-to-keep: 2
+          min-versions-to-keep: 1
