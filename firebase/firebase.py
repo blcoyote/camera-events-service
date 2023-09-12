@@ -2,6 +2,7 @@ from functools import lru_cache
 import json
 import os
 import base64
+from typing import List
 import firebase_admin
 from firebase_admin import credentials, messaging
 from loguru import logger
@@ -44,6 +45,25 @@ def send_topic_push(event: CameraEvent):
             "status": "done",
             "path":f"/eventnotification",
             'id': event.id,
+            },
+    )
+
+    messaging.send(message)
+
+def send_multiple_topic_push(events: List[CameraEvent]):
+    cameras = set(event.camera for event in events)
+    message = messaging.Message(
+        notification=messaging.Notification(
+        title=f'{len(events)} kamera events modtaget',
+        body=f','.join(cameras)
+        ),
+        topic=topic,
+        data={
+            "click_action": "FLUTTER_NOTIFICATION_CLICK",
+            "sound": "default", 
+            "status": "done",
+            "path":f"/events",
+            'id': events[0].id,
             },
     )
 
