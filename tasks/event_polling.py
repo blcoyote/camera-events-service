@@ -8,7 +8,7 @@ from firebase.firebase import send_multiple_topic_push, send_topic_push
 from tasks.event_tasks import get_events
 from models.event_model import CameraEvent, CameraEventQueryParams, CameraNotification, WsEventType, WebsocketEvent
 
-POLLING_INTERVAL = 10
+POLLING_INTERVAL = 30
 
 async def poll_for_new_events():
     aftertime = datetime.now()- timedelta(seconds = POLLING_INTERVAL)
