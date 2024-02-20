@@ -7,7 +7,7 @@ class User(BaseModel):
     full_name: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserGet(User):
     id: str
