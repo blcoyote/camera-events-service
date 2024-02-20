@@ -7,13 +7,13 @@ class CameraEvent(BaseModel):
     box:  Optional[List[int]] = []
     camera: str
     end_time: Optional[float] = None
-    false_positive: Optional[str] = None
+    false_positive: Optional[bool] = None
     has_clip: bool
     has_snapshot: bool
     id: str
     label: str
     plus_id: Optional[str] = None
-    ratio: Optional[str] = None
+    ratio: Optional[float] = None
     region: Optional[List[int]] = []
     retain_indefinitely: bool
     start_time: float
