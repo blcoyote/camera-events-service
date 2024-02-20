@@ -9,14 +9,14 @@ def get_events(params: Optional[CameraEventQueryParams] = CameraEventQueryParams
     url = f"{get_settings().frigate_baseurl}/api/events"
     headers = {"Content-Type": "application/json"}
     try:
-        response = requests.get(url, params=pydantic.parse_obj_as(dict, params), headers=headers)
+        response = requests.get(url, params=params.model_dump(), headers=headers)
         response.raise_for_status()
-        out = pydantic.parse_obj_as(List[CameraEvent], response.json())
-        return out
+        adapter = pydantic.TypeAdapter(List[CameraEvent])
+        data = adapter.validate_python(response.json())
+        return data
     except Exception as e:
         logger.error(f"Error getting events from frigate: {e}")
         raise(e)
-
 
 
 def get_event(id: str) -> CameraEvent: 
@@ -24,16 +24,11 @@ def get_event(id: str) -> CameraEvent:
     headers = {"Content-Type": "application/json"}
     response = requests.get(url, headers=headers)
     response.raise_for_status()
-    out = pydantic.parse_obj_as(CameraEvent, response.json())
-    return out
 
-def get_thumbnail(id: str) -> CameraEvent: 
-    url = f"{get_settings().frigate_baseurl}/api/events/{id}/thumbnail.jpg"
-    headers = {"Content-Type": "application/json"}
-    response = requests.get(url, params=pydantic.parse_obj_as(dict), headers=headers)
-    response.raise_for_status()
-    out = pydantic.parse_obj_as(CameraEvent, response.json())
-    return out
+    adapter = pydantic.TypeAdapter(CameraEvent)
+    data = adapter.validate_python(response.json())
+
+    return data
 
 def get_snapshot(id: str) -> bytes:
     url = f"{get_settings().frigate_baseurl}/api/events/{id}/snapshot.jpg"
