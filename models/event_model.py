@@ -2,9 +2,17 @@ from typing import List, Optional
 from pydantic import BaseModel, ConfigDict, Field
 from enum import Enum
 
+
+class DataModel(BaseModel):
+    box: List[float] = []
+    region: List[float] = []
+    score: Optional[float] = None
+    top_score: Optional[float] = None
+    type: str
+
+
 class CameraEvent(BaseModel):
-    area: Optional[int] = None
-    box:  Optional[List[int]] = []
+    data: Optional[DataModel] = None
     camera: str
     end_time: Optional[float] = None
     false_positive: Optional[bool] = None
@@ -13,13 +21,10 @@ class CameraEvent(BaseModel):
     id: str
     label: str
     plus_id: Optional[str] = None
-    ratio: Optional[float] = None
-    region: Optional[List[int]] = []
     retain_indefinitely: bool
     start_time: float
     sub_label: Optional[str] = None
     thumbnail: Optional[str] = None
-    top_score: float
     zones: List[str] = []
 
 class CameraEventQueryParams(BaseModel):
