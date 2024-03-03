@@ -24,7 +24,7 @@ async def poll_for_new_events():
 
         try:
             events = get_events(params)
-            logger.info(f"Got {len(events)} events from api")
+            # logger.info(f"Got {len(events)} events from api")
         except Exception as e:
             logger.error(f"Error getting events from api: {e}")
 
