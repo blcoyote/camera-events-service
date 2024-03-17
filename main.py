@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import Depends, FastAPI, HTTPException, WebSocket, WebSocketDisconnect, status, BackgroundTasks
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
-from controllers import event_controller, user_controller
+from controllers import event_controller, user_controller, event_controllerv2
 from firebase.firebase import get_firebase_app, subscribe_topic, send_topic_push
 from lib.auth import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token, get_current_user, refresh_access_token
 from lib.settings import get_settings
@@ -37,6 +37,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 app.include_router(event_controller.router)
+app.include_router(event_controllerv2.router)
 app.include_router(user_controller.router)
 app.add_middleware(
     CORSMiddleware,
