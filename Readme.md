@@ -19,4 +19,4 @@ Requires google firebase serviceAccountKey.json contents base64'd into UVICORN_F
 
 json.loads(base64.b64decode(os.getenv("UVICORN_FIREBASE_CREDENTIALS")))
 
-it's also possible to authenticate to a local database/sqlite.
+it's also possible to authenticate to a local database/sqlite on the unversioned endpoints. (really, use v2)
