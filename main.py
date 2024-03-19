@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import Depends, FastAPI, HTTPException, WebSocket, WebSocketDisconnect, status, BackgroundTasks
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
-from controllers import event_controller, user_controller
+from controllers import event_controller, user_controller, event_controllerv2
 from firebase.firebase import get_firebase_app, subscribe_topic, send_topic_push
 from lib.auth import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token, get_current_user, refresh_access_token
 from lib.settings import get_settings
@@ -13,21 +13,31 @@ from sqlalchemy.orm import Session
 from models.user import User
 from models.token import Token
 from database import crud, schema, database
+from contextlib import asynccontextmanager
 from tasks.event_polling import poll_for_new_events, check_for_stale_fcmtokens
 
 schema.Base.metadata.create_all(bind=database.engine)
 
+
 logger.add(f"./logs/apilog_{datetime.now().strftime('%Y-%m-%d')}.log", rotation="1 day",
            colorize=False, format="{time:YYYY-MM-DD HH:mm:ss.SSS} | {level} | <level>{message}</level>")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    asyncio.create_task(poll_for_new_events())
+    asyncio.create_task(check_for_stale_fcmtokens())
+    yield
+
 
 app = FastAPI(
-    title=get_settings().app_name, 
-    version=get_settings().app_version, 
+    title=get_settings().app_name,
+    version=get_settings().app_version,
     debug=False,
-    docs_url=get_settings().docs_url, # Disable docs (Swagger UI)
-    redoc_url=None, # Disable redoc
-    )
+    docs_url=get_settings().docs_url,  # Disable docs (Swagger UI)
+    redoc_url=None,  # Disable redoc
+    lifespan=lifespan,
+)
 app.include_router(event_controller.router)
+app.include_router(event_controllerv2.router)
 app.include_router(user_controller.router)
 app.add_middleware(
     CORSMiddleware,
@@ -41,11 +51,6 @@ firebase_App = get_firebase_app()
 
 
 background_tasks = BackgroundTasks()
-
-@app.on_event('startup')
-async def app_startup():
-    asyncio.create_task(poll_for_new_events())
-    asyncio.create_task(check_for_stale_fcmtokens())
 
 
 @app.get("/application-configuration")
@@ -101,7 +106,6 @@ async def register_fcm(token: str, current_user: Annotated[User, Depends(get_cur
             logger.info(f"Registering FCM token for user {current_user.username}")
             subscribe_topic(token)
             crud.store_fcm_token(db=db, fcm_token=token)
-            
+
     except Exception as e:
         logger.error(f"Failed to handle fcm token: {e}")
-

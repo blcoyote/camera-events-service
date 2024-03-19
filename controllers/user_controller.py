@@ -1,8 +1,8 @@
-from typing import Annotated, List
+from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from loguru import logger
 from models.user import User, UserCreate, UserGet
-from database import schema, crud, database
+from database import crud, database
 from lib.auth import get_current_active_user
 from sqlalchemy.orm import Session
 
