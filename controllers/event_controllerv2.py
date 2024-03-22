@@ -9,7 +9,7 @@ from lib.auth import get_current_active_user
 from starlette.responses import StreamingResponse
 
 router = APIRouter(
-    prefix="/v2/events",
+    prefix="/api/v2/events",
     tags=["v2/events"],
     dependencies=[Depends(verify_user_check)],
     responses={404: {"description": "Not found"}},
