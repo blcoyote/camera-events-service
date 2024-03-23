@@ -14,14 +14,32 @@ router = APIRouter(
 
 @router.get("/{event_id}/snapshot.jpg", status_code=200)
 async def read_event_snapshot(event_id: str):
-    return StreamingResponse(io.BytesIO(get_snapshot(event_id)), media_type="image/jpg")
+    return StreamingResponse(
+        io.BytesIO(get_snapshot(event_id)),
+        media_type="multipart/form-data",
+        headers={
+            "Content-Disposition": f"attachment; filename=snapshot-{event_id}.jpg",
+        },
+    )
 
 
 @router.get("/{camera}/latest.jpg", status_code=200)
 async def read_event_latest(camera: str):
-    return StreamingResponse(io.BytesIO(get_latest(camera)), media_type="image/jpg")
+    return StreamingResponse(
+        io.BytesIO(get_latest(camera)),
+        media_type="multipart/form-data",
+        headers={
+            "Content-Disposition": f"attachment; filename=latest-{camera}.jpg",
+        },
+    )
 
 
 @router.get("/{event_id}/clip.mp4", status_code=200)
 async def read_event_clip(event_id: str):
-    return StreamingResponse(io.BytesIO(get_clip(event_id)), media_type="video/mp4")
+    return StreamingResponse(
+        io.BytesIO(get_clip(event_id)),
+        media_type="multipart/form-data",
+        headers={
+            "Content-Disposition": f"attachment; filename=clip-{event_id}.mp4",
+        },
+    )
