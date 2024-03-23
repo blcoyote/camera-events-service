@@ -1,16 +1,10 @@
 from datetime import datetime
-import io
-from typing import Annotated
 from fastapi import APIRouter, Depends
 from loguru import logger
-from pytest import Session
+from sqlalchemy.orm import Session
 from database import crud, database
 from firebase.auth import verify_url_token
 from firebase.firebase import subscribe_topic
-from lib.auth import get_current_user
-from models.user import User
-from tasks.event_tasks import get_clip, get_latest, get_snapshot
-from starlette.responses import StreamingResponse
 
 router = APIRouter(
     prefix="/api/v2",

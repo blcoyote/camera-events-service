@@ -5,7 +5,6 @@ from firebase.auth import verify_user_check
 from lib.settings import get_settings
 from tasks.event_tasks import get_clip, get_events, get_latest, get_snapshot, get_event
 from models.event_model import CameraEvent, CameraEventQueryParams
-from lib.auth import get_current_active_user
 from starlette.responses import StreamingResponse
 
 router = APIRouter(
