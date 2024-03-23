@@ -15,7 +15,7 @@ from starlette.responses import StreamingResponse
 router = APIRouter(
     prefix="/api/v2",
     tags=["v2/fcm"],
-    dependencies=[Depends(verify_url_token)],
+    dependencies=[],
     responses={404: {"description": "Not found"}},
 )
 
@@ -24,6 +24,7 @@ router = APIRouter(
 async def register_fcm(
     fcm_token: str,
     db: Session = Depends(database.get_db),
+    token: str = Depends(verify_url_token),
 ):
     try:
         existing_token = crud.find_fcm_token(db=db, fcm_token=fcm_token)
