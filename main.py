@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from controllers import (
     download_controller,
     event_controller,
+    fcm_controller,
     user_controller,
     event_controllerv2,
 )
@@ -45,6 +46,7 @@ app.include_router(event_controller.router)
 app.include_router(event_controllerv2.router)
 app.include_router(download_controller.router)
 app.include_router(user_controller.router)
+app.include_router(fcm_controller.router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=['*'],
