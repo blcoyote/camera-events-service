@@ -1,9 +1,9 @@
 version: '3.3'
 services:
-    cameraevents:
+    camera-events-service:
         volumes:
-            - '/volume1/docker/cameraevents/userdb.db:/app/userdb.db'
-            - '/volume1/docker/cameraevents/logs/:/app/logs/'
+            - /volume1/docker/cameraevents/userdb.db:/app/userdb.db
+            - /volume1/docker/cameraevents/logs/:/app/logs/
         network_mode: web
         container_name: cameraevents
         image: ghcr.io/blcoyote/camera-events-service:latest
@@ -11,9 +11,14 @@ services:
         #     - .env
         environment:
             - MAX_WORKERS=1
-            - UVICORN_APP_VERSION="0.0.2"
+            - UVICORN_APP_VERSION=0.0.2
             - UVICORN_FRIGATE_BASEURL=$UVICORN_FRIGATE_BASEURL
             - UVICORN_SERET_KEY=$UVICORN_SERET_KEY
             - UVICORN_DATABASE_URL=$UVICORN_DATABASE_URL
             - UVICORN_DOCS_URL=$UVICORN_DOCS_URL
             - UVICORN_FIREBASE_CREDENTIALS=$UVICORN_FIREBASE_CREDENTIALS
+        labels:
+            - traefik.http.routers.cameraeventspwa.rule=Host(`$DNS_NAME`)
+            - traefik.http.routers.cameraeventspwa.tls=true
+            - traefik.http.routers.cameraeventspwa.tls.certresolver=lets-encrypt
+            - traefik.http.services.cameraeventspwa.loadbalancer.server.port=80
