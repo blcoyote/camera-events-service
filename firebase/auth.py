@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import Depends, HTTPException, Header
+from fastapi import HTTPException, Header, Query
 from fastapi.security import HTTPBearer
 from firebase_admin import app_check
 from firebase_admin import auth
@@ -9,11 +9,11 @@ from loguru import logger
 bearer_scheme = HTTPBearer(auto_error=False)
 
 
-def verify_user_check(X_token: Annotated[str, Header()] = "") -> None:
-    if not X_token:
+def verify_token(token: str) -> dict:
+    if not token:
         raise HTTPException(status_code=401, detail="Unauthorized")
     try:
-        auth_check_claims = auth.verify_id_token(X_token)
+        auth_check_claims = auth.verify_id_token(token)
         logger.info(f"successfilly vallidated token for: {auth_check_claims['email']}")
         # If verify_token() succeeds, okay to continue to route handler.
     except (ValueError, jwt.exceptions.DecodeError):
@@ -23,3 +23,11 @@ def verify_user_check(X_token: Annotated[str, Header()] = "") -> None:
         # Token is invalid, forbidden
         logger.error(f"AppCheckError: {e}")
         raise HTTPException(status_code=403, detail="Invalid token")
+
+
+def verify_user_check(X_token: Annotated[str, Header()] = "") -> None:
+    verify_token(X_token)
+
+
+def verify_url_token(token: Annotated[str | None, Query()]) -> None:
+    verify_token(token)
