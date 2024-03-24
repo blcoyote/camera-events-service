@@ -14,7 +14,7 @@ router = APIRouter(
 )
 
 
-@router.post("/fcm", status_code=200)
+@router.get("/fcm", status_code=200)
 async def register_fcm(
     fcm_token: str,
     db: Session = Depends(database.get_db),
