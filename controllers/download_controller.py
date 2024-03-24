@@ -16,7 +16,7 @@ router = APIRouter(
 async def read_event_snapshot(event_id: str):
     return StreamingResponse(
         io.BytesIO(get_snapshot(event_id)),
-        media_type="multipart/form-data",
+        media_type="image/jpg",
         headers={
             "Content-Disposition": f"attachment; filename=snapshot-{event_id}.jpg",
         },
@@ -27,7 +27,7 @@ async def read_event_snapshot(event_id: str):
 async def read_event_latest(camera: str):
     return StreamingResponse(
         io.BytesIO(get_latest(camera)),
-        media_type="multipart/form-data",
+        media_type="image/jpg",
         headers={
             "Content-Disposition": f"attachment; filename=latest-{camera}.jpg",
         },
@@ -38,7 +38,7 @@ async def read_event_latest(camera: str):
 async def read_event_clip(event_id: str):
     return StreamingResponse(
         io.BytesIO(get_clip(event_id)),
-        media_type="multipart/form-data",
+        media_type="video/mp4",
         headers={
             "Content-Disposition": f"attachment; filename=clip-{event_id}.mp4",
         },
