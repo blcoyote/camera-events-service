@@ -17,6 +17,7 @@ services:
             - UVICORN_DATABASE_URL=$UVICORN_DATABASE_URL
             - UVICORN_DOCS_URL=$UVICORN_DOCS_URL
             - UVICORN_FIREBASE_CREDENTIALS=$UVICORN_FIREBASE_CREDENTIALS
+            - UVICORN_WEB_URL=$UVICORN_WEB_URL
         labels:
             - traefik.http.routers.cameraeventspwa.rule=Host(`$DNS_NAME`)
             - traefik.http.routers.cameraeventspwa.tls=true

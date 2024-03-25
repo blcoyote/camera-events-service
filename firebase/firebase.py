@@ -43,7 +43,7 @@ def send_topic_push(event: CameraEvent):
         topic=topic,
         webpush=messaging.WebpushConfig(
             notification=messaging.WebpushNotification(
-                title=f"Person set i kamera: {event.camera}",
+                title=f"Person set i {event.camera}",
                 body=f"id: {event.id}",
             ),
             fcm_options=messaging.WebpushFCMOptions(
