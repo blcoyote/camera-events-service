@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     frigate_baseurl: str = Field(os.getenv("UVICORN_FRIGATE_BASEURL", ""))
     secret_key: str = Field(os.getenv("UVICORN_SECRET_KEY", ""))
     sqlalchemy_database_url: str = Field(os.getenv("UVICORN_DATABASE_URL", ""))
+    web_url: str = Field(os.getenv("UVICORN_WEB_URL", ""))
     cameras: List[str] = Field(
         [
             "gavl_vest",

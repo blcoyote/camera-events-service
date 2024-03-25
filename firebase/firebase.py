@@ -1,3 +1,4 @@
+from datetime import datetime
 from functools import lru_cache
 import json
 import os
@@ -6,6 +7,7 @@ from typing import List
 import firebase_admin
 from firebase_admin import credentials, messaging
 from loguru import logger
+from lib.settings import get_settings
 
 from models.event_model import CameraEvent
 
@@ -22,51 +24,77 @@ def get_firebase_app():
 
 
 def subscribe_topic(tokens): # tokens is a list of registration tokens
- response = messaging.subscribe_to_topic(tokens, topic)
- if response.failure_count > 0:
-  logger.error(f'Failed to subscribe to topic {topic} due to {list(map(lambda e: e.reason, response.errors))}')
-        
-def unsubscribe_topic(tokens): # tokens is a list of registration tokens
- response = messaging.unsubscribe_from_topic(tokens, topic)
- if response.failure_count > 0:
-    logger.error(f'Failed to subscribe to topic {topic} due to {list(map(lambda e: e.reason, response.errors))}')
-        
-def send_topic_push(event: CameraEvent):
-    
-    message = messaging.Message(
-        notification=messaging.Notification(
-        title=f'Person set i kamera: {event.camera}',
-        body=f'id: {event.id}'
-        ),
-        topic=topic,
-        data={
-            "click_action": "FLUTTER_NOTIFICATION_CLICK",
-            "sound": "default", 
-            "status": "done",
-            "path":f"/eventnotification",
-            'id': event.id,
-            },
-    )
+    response = messaging.subscribe_to_topic(tokens, topic)
+    if response.failure_count > 0:
+        logger.error(
+            f"Failed to subscribe to topic {topic} due to {list(map(lambda e: e.reason, response.errors))}"
+        )
 
+def unsubscribe_topic(tokens): # tokens is a list of registration tokens
+    response = messaging.unsubscribe_from_topic(tokens, topic)
+    if response.failure_count > 0:
+        logger.error(
+            f"Failed to subscribe to topic {topic} due to {list(map(lambda e: e.reason, response.errors))}"
+        )
+
+
+def send_topic_push(event: CameraEvent):
+    message = messaging.Message(
+        topic=topic,
+        webpush=messaging.WebpushConfig(
+            notification=messaging.WebpushNotification(
+                title=f"Person set i kamera: {event.camera}",
+                body=f"id: {event.id}",
+            ),
+            fcm_options=messaging.WebpushFCMOptions(
+                link=f"https://{get_settings().web_url}/eventnotification{event.id}",
+            ),
+            headers={"Urgency": "high"},
+        ),
+        android=messaging.AndroidConfig(
+            notification=messaging.AndroidNotification(
+                title=f"Person set i kamera: {event.camera}", body=f"id: {event.id}"
+            ),
+            ttl=36000,
+            data={
+                "click_action": "FLUTTER_NOTIFICATION_CLICK",
+                "sound": "default",
+                "status": "done",
+                "path": f"/eventnotification",
+                "id": event.id,
+            },
+        ),
+    )
     messaging.send(message)
+
 
 def send_multiple_topic_push(events: List[CameraEvent]):
     cameras = set(event.camera for event in events)
     message = messaging.Message(
-        notification=messaging.Notification(
-        title=f'{len(events)} kamera events modtaget',
-        body=f','.join(cameras)
+        topic="cameraevents",
+        webpush=messaging.WebpushConfig(
+            notification=messaging.WebpushNotification(
+                title=f"{len(events)} kamera events modtaget", body=f",".join(cameras)
+            ),
+            fcm_options=messaging.WebpushFCMOptions(
+                link=f"https://{get_settings().web_url}/events",
+            ),
+            headers={"Urgency": "high"},
         ),
-        topic=topic,
-        data={
-            "click_action": "FLUTTER_NOTIFICATION_CLICK",
-            "sound": "default", 
-            "status": "done",
-            "path":f"/events",
-            'id': events[0].id,
+        android=messaging.AndroidConfig(
+            notification=messaging.AndroidNotification(
+                title=f"{len(events)} kamera events modtaget", body=f",".join(cameras)
+            ),
+            ttl=36000,
+            data={
+                "click_action": "FLUTTER_NOTIFICATION_CLICK",
+                "sound": "default",
+                "status": "done",
+                "path": f"/events",
+                "id": events[0].id,
             },
+        ),
     )
-
     messaging.send(message)
 
 
