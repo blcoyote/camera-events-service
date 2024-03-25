@@ -11,7 +11,7 @@ from firebase_admin import credentials, messaging, initialize_app
 def get_events(
     params: Optional[CameraEventQueryParams] = CameraEventQueryParams(),
 ) -> List[CameraEvent]:
-    url = f"http://192.168.0.39:5000/api/events"
+    url = f"http://internalurl:5000/api/events"
     headers = {"Content-Type": "application/json"}
     try:
         response = requests.get(url, params=params.model_dump(), headers=headers)
@@ -37,7 +37,7 @@ def send_topic_push(event: CameraEvent):
                 body=f"id: {event.id}",
             ),
             fcm_options=messaging.WebpushFCMOptions(
-                link=f"https://ce.elcoyote.dk/eventnotification{event.id}",
+                link=f"https://url/eventnotification{event.id}",
             ),
             headers={"Urgency": "high"},
         ),
