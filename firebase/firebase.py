@@ -47,7 +47,7 @@ def send_topic_push(event: CameraEvent):
                 body=f"id: {event.id}",
             ),
             fcm_options=messaging.WebpushFCMOptions(
-                link=f"https://{get_settings().web_url}/eventnotification{event.id}",
+                link=f"https://{get_settings().web_url}/eventnotification/{event.id}",
             ),
             headers={"Urgency": "high"},
         ),
