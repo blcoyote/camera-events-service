@@ -37,7 +37,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-#Deprecated routes (username/password based oauth)
+# Deprecated routes (username/password based oauth)
 app.include_router(user_controller.router)
 app.include_router(event_controller.router)
 app.include_router(fcm_controller.router)
