@@ -37,11 +37,11 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-#Deprecated routes
+#Deprecated routes (username/password based oauth)
 app.include_router(user_controller.router)
 app.include_router(event_controller.router)
 app.include_router(fcm_controller.router)
-# Active routes
+# Active routes (firebase auth)
 app.include_router(download_controller.router)
 app.include_router(event_controllerv2.router)
 app.include_router(fcm_controllerV2.router)
@@ -58,5 +58,3 @@ logger.info("Starting Frigate API...")
 firebase_App = get_firebase_app()
 
 background_tasks = BackgroundTasks()
-
-
