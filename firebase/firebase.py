@@ -45,6 +45,7 @@ def send_topic_push(event: CameraEvent):
             notification=messaging.WebpushNotification(
                 title=f"Person set i {event.camera}",
                 body=f"id: {event.id}",
+                icon=f"https://{get_settings().web_url}/pwa-192x192.png",
             ),
             fcm_options=messaging.WebpushFCMOptions(
                 link=f"https://{get_settings().web_url}/eventnotification/{event.id}",

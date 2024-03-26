@@ -2,7 +2,6 @@ from functools import lru_cache
 from typing import List
 from pydantic_settings import BaseSettings
 from pydantic import ConfigDict, Field
-from loguru import logger
 import os
 
 
