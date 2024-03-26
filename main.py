@@ -65,7 +65,11 @@ background_tasks = BackgroundTasks()
 async def app_config():
     return {}
 
-@app.post("/token", response_model=Token)
+
+## DEPRECATED ROUTES - Removed with next version of android app.
+
+
+@app.post("/token", response_model=Token, deprecated=True)
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(database.get_db)
 ):
@@ -82,7 +86,7 @@ async def login_for_access_token(
     return {"access_token": access_token[0], "refresh_token":access_token[1], "token_type": "bearer"}
 
 
-@app.post("/token/refresh", response_model=Token)
+@app.post("/token/refresh", response_model=Token, deprecated=True)
 async def refresh_token(
     token: str, 
     user: str,
@@ -96,7 +100,7 @@ async def refresh_token(
     return {"access_token": access_token[0], "refresh_token":access_token[1], "token_type": "bearer"}
 
 
-@app.post("/fcm", status_code=200)
+@app.post("/fcm", status_code=200, deprecated=True)
 async def register_fcm(token: str, current_user: Annotated[User, Depends(get_current_user)], db: Session = Depends(database.get_db)):
 
     try:

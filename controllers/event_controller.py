@@ -12,6 +12,7 @@ router = APIRouter(
     tags=["events"],
     dependencies=[Depends(get_current_active_user)],
     responses={404: {"description": "Not found"}},
+    deprecated=True
 )
 
 @router.get("/" , response_model=List[CameraEvent], status_code=200, )

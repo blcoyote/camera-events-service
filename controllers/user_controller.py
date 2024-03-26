@@ -12,6 +12,7 @@ router = APIRouter(
     tags=["users"],
     dependencies=[Depends(get_current_active_user)],
     responses={404: {"description": "Not found"}},
+    deprecated=True
 )
 
 
