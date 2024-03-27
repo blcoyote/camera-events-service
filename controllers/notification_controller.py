@@ -1,10 +1,10 @@
 import io
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 from fastapi.responses import RedirectResponse
+from loguru import logger
 from database.redis_datastore import get_snapshot_id
-from firebase.auth import verify_url_token
 from lib.settings import get_settings
-from tasks.event_tasks import get_clip, get_latest, get_snapshot
+from tasks.event_tasks import  get_placeholder, get_snapshot
 from starlette.responses import StreamingResponse
 
 router = APIRouter(
@@ -15,17 +15,17 @@ router = APIRouter(
 )
 
 
-def invalid_image():
-    return RedirectResponse(url=f"https://{get_settings().web_url}/pwa-192x192.png")
-
-
 @router.get("/notification/{image_token}", status_code=200)
 async def read_event_latest(image_token: str):
+
+    event_id = get_snapshot_id(image_token)
+    logger.info(f"Getting snapshot for event {event_id}")
     try:
-        event_id = get_snapshot_id(image_token)
-        if event_id is None:
-            return invalid_image()
-        return StreamingResponse(io.BytesIO(event_id), media_type="image/jpg")
-    except:
-        return invalid_image()
+        if event_id is not None:
+            return StreamingResponse(io.BytesIO(get_snapshot(event_id)), media_type="image/jpg")
+        return StreamingResponse(io.BytesIO(get_placeholder()), media_type="image/png")
+    except Exception as e:
+        logger.error(f"Error getting snapshot: {e}")
+
+
 
