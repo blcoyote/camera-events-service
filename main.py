@@ -2,18 +2,18 @@ import asyncio
 from datetime import datetime
 from fastapi import FastAPI, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
+
 from firebase.firebase import get_firebase_app
 from lib.settings import get_settings
 from loguru import logger
 from database import  schema, database
 from contextlib import asynccontextmanager
 from tasks.event_polling import poll_for_new_events, check_for_stale_fcmtokens
+from controllers.deprecated import event_controller, fcm_controller, user_controller
 from controllers import (
     download_controller,
-    event_controller,
-    fcm_controller,
     fcm_controllerV2,
-    user_controller,
+    notification_controller,
     event_controllerv2,
 )
 
@@ -45,6 +45,7 @@ app.include_router(fcm_controller.router)
 app.include_router(download_controller.router)
 app.include_router(event_controllerv2.router)
 app.include_router(fcm_controllerV2.router)
+app.include_router(notification_controller.router)
 
 app.add_middleware(
     CORSMiddleware,

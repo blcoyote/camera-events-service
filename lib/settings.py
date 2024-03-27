@@ -18,13 +18,14 @@ class Settings(BaseSettings):
     secret_key: str = Field(os.getenv("UVICORN_SECRET_KEY", ""))
     sqlalchemy_database_url: str = Field(os.getenv("UVICORN_DATABASE_URL", ""))
     web_url: str = Field(os.getenv("UVICORN_WEB_URL", ""))
+    redis_host: str = Field(os.getenv("UVICORN_REDIS_URL", ""))
+    redis_password: str = Field(os.getenv("UVICORN_REDIS_PASSWORD", ""))
     cameras: List[str] = Field(
         [
             "gavl_vest",
             "garage",
             "gavl_oest",
             "have",
-            "rpiCamera",
             "stuen",
             "koekken",
             "reserve",

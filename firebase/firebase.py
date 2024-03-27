@@ -7,6 +7,7 @@ from typing import List
 import firebase_admin
 from firebase_admin import credentials, messaging
 from loguru import logger
+from database.redis_datastore import set_temporary_image_token
 from lib.settings import get_settings
 
 from models.event_model import CameraEvent
@@ -39,6 +40,8 @@ def unsubscribe_topic(tokens): # tokens is a list of registration tokens
 
 
 def send_topic_push(event: CameraEvent):
+    image_token = set_temporary_image_token(event.id)
+
     message = messaging.Message(
         topic=topic,
         webpush=messaging.WebpushConfig(
@@ -46,6 +49,7 @@ def send_topic_push(event: CameraEvent):
                 title=f"Person set i {event.camera}",
                 body=f"id: {event.id}",
                 icon=f"https://{get_settings().web_url}/pwa-192x192.png",
+                image=f"https://${get_settings().web_url}/api/v2/attachments/notification/{image_token}"
             ),
             fcm_options=messaging.WebpushFCMOptions(
                 link=f"https://{get_settings().web_url}/eventnotification/{event.id}",
