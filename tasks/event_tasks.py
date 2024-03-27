@@ -40,6 +40,11 @@ def get_latest(camera: str) -> bytes:
     response = requests.get(url).content
     return response
 
+def get_placeholder() -> bytes:
+    with open("pwa-192x192.png", "rb") as image:
+        f = image.read()
+    return f
+
 
 def get_clip(id: str) -> bytes:
     url = f"{get_settings().frigate_baseurl}/api/events/{id}/clip.mp4"

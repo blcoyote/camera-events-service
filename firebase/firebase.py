@@ -38,7 +38,7 @@ def unsubscribe_topic(tokens): # tokens is a list of registration tokens
             f"Failed to subscribe to topic {topic} due to {list(map(lambda e: e.reason, response.errors))}"
         )
 
-
+@logger.catch()
 def send_topic_push(event: CameraEvent):
     image_token = set_temporary_image_token(event.id)
     logger.info(f"Sending push notification for event {event.id} with image token {image_token}")
@@ -48,7 +48,7 @@ def send_topic_push(event: CameraEvent):
             notification=messaging.WebpushNotification(
                 title=f"Person set i {event.camera}",
                 body=f"id: {event.id}",
-                icon=f"https://{get_settings().web_url}/pwa-192x192.png",
+                icon=f"https://{get_settings().web_url}/pwa-64x64.png",
                 image=f"https://${get_settings().web_url}/api/v2/attachments/notification/{image_token}"
             ),
             fcm_options=messaging.WebpushFCMOptions(
@@ -58,7 +58,8 @@ def send_topic_push(event: CameraEvent):
         ),
         android=messaging.AndroidConfig(
             notification=messaging.AndroidNotification(
-                title=f"Person set i kamera: {event.camera}", body=f"id: {event.id}"
+                title=f"Person set i {event.camera}", body=f"id: {event.id}",
+                icon=f"https://${get_settings().web_url}/pwa-64x64.png"
             ),
             ttl=36000,
             data={
@@ -72,14 +73,15 @@ def send_topic_push(event: CameraEvent):
     )
     messaging.send(message)
 
-
+@logger.catch()
 def send_multiple_topic_push(events: List[CameraEvent]):
     cameras = set(event.camera for event in events)
     message = messaging.Message(
         topic="cameraevents",
         webpush=messaging.WebpushConfig(
             notification=messaging.WebpushNotification(
-                title=f"{len(events)} kamera events modtaget", body=f",".join(cameras)
+                title=f"{len(events)} kamera events modtaget", body=f",".join(cameras),
+                icon=f"https://{get_settings().web_url}/pwa-64x64.png",
             ),
             fcm_options=messaging.WebpushFCMOptions(
                 link=f"https://{get_settings().web_url}/events",
@@ -88,7 +90,8 @@ def send_multiple_topic_push(events: List[CameraEvent]):
         ),
         android=messaging.AndroidConfig(
             notification=messaging.AndroidNotification(
-                title=f"{len(events)} kamera events modtaget", body=f",".join(cameras)
+                title=f"{len(events)} kamera events modtaget", body=f",".join(cameras),
+                icon=f"https://{get_settings().web_url}/pwa-64x64.png"
             ),
             ttl=36000,
             data={
