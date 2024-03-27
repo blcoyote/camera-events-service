@@ -3,7 +3,7 @@ from typing import List
 from loguru import logger
 from datetime import datetime, timedelta
 from database import database
-from database.crud import delete_stale_fcm_tokens, get_stale_fcm_tokens
+from database.crud import delete_stale_fcm_tokens
 from firebase.firebase import send_multiple_topic_push, send_topic_push
 from tasks.event_tasks import get_events
 from models.event_model import CameraEvent, CameraEventQueryParams, CameraNotification, WsEventType, WebsocketEvent

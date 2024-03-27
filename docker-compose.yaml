@@ -1,14 +1,14 @@
-version: '3.3'
+version: '3.8'
 services:
     camera-events-service:
         volumes:
             - /volume1/docker/cameraevents/userdb.db:/app/userdb.db
             - /volume1/docker/cameraevents/logs/:/app/logs/
-        network_mode: web
-        container_name: cameraevents
+        networks:
+            - datastorage
+            - web
+        container_name: camera-events-service
         image: ghcr.io/blcoyote/camera-events-service:latest
-        # env_file:
-        #     - .env
         environment:
             - MAX_WORKERS=1
             - UVICORN_APP_VERSION=0.0.2
@@ -19,7 +19,33 @@ services:
             - UVICORN_FIREBASE_CREDENTIALS=$UVICORN_FIREBASE_CREDENTIALS
             - UVICORN_WEB_URL=$UVICORN_WEB_URL
         labels:
-            - traefik.http.routers.cameraeventspwa.rule=Host(`$DNS_NAME`)
-            - traefik.http.routers.cameraeventspwa.tls=true
-            - traefik.http.routers.cameraeventspwa.tls.certresolver=lets-encrypt
-            - traefik.http.services.cameraeventspwa.loadbalancer.server.port=80
+            - traefik.http.routers.cameraevents.rule=Host(`$DNS_NAME`)
+            - traefik.http.routers.cameraevents.tls=true
+            - traefik.http.routers.cameraevents.tls.certresolver=lets-encrypt
+            - traefik.http.services.cameraevents.loadbalancer.server.port=80
+    camera-events-redis:
+        image: redis:7.2.4-alpine
+        container_name: camera-events-redis
+        restart: always
+        ports:
+            - 6379:6379
+        networks:
+            - datastorage
+            - web
+        volumes:
+            - /volume1/docker/redis:/root/redis
+        environment:
+            - REDIS_PASSWORD=$REDIS_PASSWORD
+            - REDIS_PORT=6379
+            - REDIS_DATABASES=1
+        command:
+            - /bin/sh
+            - -c
+            - redis-server --requirepass $${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}
+networks:
+    web:
+        name: web
+        external: true
+    datastorage:
+        name: datastorage
+        external: true
