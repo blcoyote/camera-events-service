@@ -10,7 +10,7 @@ from models.event_model import CameraEvent, CameraEventQueryParams, CameraNotifi
 
 POLLING_INTERVAL = 30
 
-
+@logger.catch()
 async def poll_for_new_events():
     while True:
         aftertime = datetime.now() - timedelta(seconds=POLLING_INTERVAL)
@@ -29,7 +29,6 @@ async def poll_for_new_events():
             logger.error(f"Error getting events from api: {e}")
 
         if len(events) == 1:
-            logger.info(f"Found event. Pushing to clients")
             for event in events:
                 try:
                     send_topic_push(event)

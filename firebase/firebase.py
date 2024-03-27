@@ -41,7 +41,7 @@ def unsubscribe_topic(tokens): # tokens is a list of registration tokens
 
 def send_topic_push(event: CameraEvent):
     image_token = set_temporary_image_token(event.id)
-
+    logger.info(f"Sending push notification for event {event.id} with image token {image_token}")
     message = messaging.Message(
         topic=topic,
         webpush=messaging.WebpushConfig(
