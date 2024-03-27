@@ -11,13 +11,15 @@ services:
         image: ghcr.io/blcoyote/camera-events-service:latest
         environment:
             - MAX_WORKERS=1
-            - UVICORN_APP_VERSION=0.0.2
+            - UVICORN_APP_VERSION=0.0.3
             - UVICORN_FRIGATE_BASEURL=$UVICORN_FRIGATE_BASEURL
             - UVICORN_SERET_KEY=$UVICORN_SERET_KEY
             - UVICORN_DATABASE_URL=$UVICORN_DATABASE_URL
             - UVICORN_DOCS_URL=$UVICORN_DOCS_URL
             - UVICORN_FIREBASE_CREDENTIALS=$UVICORN_FIREBASE_CREDENTIALS
             - UVICORN_WEB_URL=$UVICORN_WEB_URL
+            - UVICORN_REDIS_URL=$UVICORN_REDIS_URL
+            - UVICORN_REDIS_PASSWORD=$REDIS_PASSWORD
         labels:
             - traefik.http.routers.cameraevents.rule=Host(`$DNS_NAME`)
             - traefik.http.routers.cameraevents.tls=true

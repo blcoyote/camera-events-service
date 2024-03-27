@@ -14,7 +14,7 @@ def verify_token(token: str) -> dict:
         raise HTTPException(status_code=401, detail="Unauthorized")
     try:
         auth_check_claims = auth.verify_id_token(token)
-        logger.info(f"successfilly vallidated token for: {auth_check_claims['email']}")
+        logger.info(f"successfully validated token for: {auth_check_claims['email']}")
         # If verify_token() succeeds, okay to continue to route handler.
     except (ValueError, jwt.exceptions.DecodeError):
         # Token is invalid, forbidden
