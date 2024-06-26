@@ -54,7 +54,7 @@ def send_topic_push(event: CameraEvent):
             fcm_options=messaging.WebpushFCMOptions(
                 link=f"https://{get_settings().web_url}/eventnotification/{event.id}",
             ),
-            headers={"Urgency": "high"},
+            headers={"Urgency": "high", "TTL": "3600s"},
         ),
         android=messaging.AndroidConfig(
             notification=messaging.AndroidNotification(
