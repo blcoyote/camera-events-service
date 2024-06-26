@@ -2,7 +2,7 @@ fastapi==0.109.1
 uvicorn[standard]==0.22.*
 pydantic[dotenv]==2.5.*
 pydantic-settings==2.2.*
-requests==2.31.*
+requests==2.32.*
 loguru==0.7.*
 python-multipart==0.0.9
 python-jose[cryptography]==3.3.*
