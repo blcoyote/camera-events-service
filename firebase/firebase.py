@@ -66,7 +66,7 @@ def send_topic_push(event: CameraEvent):
                 "click_action": "FLUTTER_NOTIFICATION_CLICK",
                 "sound": "default",
                 "status": "done",
-                "path": f"/eventnotification",
+                "path": "/eventnotification",
                 "id": event.id,
             },
         ),
@@ -80,7 +80,8 @@ def send_multiple_topic_push(events: List[CameraEvent]):
         topic="cameraevents",
         webpush=messaging.WebpushConfig(
             notification=messaging.WebpushNotification(
-                title=f"{len(events)} kamera events modtaget", body=f",".join(cameras),
+                title=f"{len(events)} kamera events modtaget", 
+                body=",".join(cameras),
                 icon=f"https://{get_settings().web_url}/pwa-64x64.png",
             ),
             fcm_options=messaging.WebpushFCMOptions(
@@ -90,7 +91,8 @@ def send_multiple_topic_push(events: List[CameraEvent]):
         ),
         android=messaging.AndroidConfig(
             notification=messaging.AndroidNotification(
-                title=f"{len(events)} kamera events modtaget", body=f",".join(cameras),
+                title=f"{len(events)} kamera events modtaget", 
+                body=",".join(cameras),
                 icon=f"https://{get_settings().web_url}/pwa-64x64.png"
             ),
             ttl=36000,
@@ -98,7 +100,7 @@ def send_multiple_topic_push(events: List[CameraEvent]):
                 "click_action": "FLUTTER_NOTIFICATION_CLICK",
                 "sound": "default",
                 "status": "done",
-                "path": f"/events",
+                "path": "/events",
                 "id": events[0].id,
             },
         ),
