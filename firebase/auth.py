@@ -1,7 +1,6 @@
 from typing import Annotated
 from fastapi import HTTPException, Header, Query
 from fastapi.security import HTTPBearer
-from firebase_admin import app_check
 from firebase_admin import auth
 import jwt
 from loguru import logger

@@ -9,12 +9,11 @@ from loguru import logger
 from database import  schema, database
 from contextlib import asynccontextmanager
 from tasks.event_polling import poll_for_new_events, check_for_stale_fcmtokens
-from controllers.deprecated import event_controller, fcm_controller, user_controller
 from controllers import (
     download_controller,
-    fcm_controllerV2,
+    fcm_controller,
     notification_controller,
-    event_controllerv2,
+    event_controller,
 )
 
 schema.Base.metadata.create_all(bind=database.engine)
@@ -37,14 +36,10 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Deprecated routes (username/password based oauth)
-app.include_router(user_controller.router)
-app.include_router(event_controller.router)
-app.include_router(fcm_controller.router)
 # Active routes (firebase auth)
 app.include_router(download_controller.router)
-app.include_router(event_controllerv2.router)
-app.include_router(fcm_controllerV2.router)
+app.include_router(event_controller.router)
+app.include_router(fcm_controller.router)
 app.include_router(notification_controller.router)
 
 app.add_middleware(

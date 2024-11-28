@@ -30,7 +30,7 @@ async def register_fcm(
                 subscribe_topic(fcm_token)
                 crud.update_fcm_token_last_uploaded(db=db, fcm_token=fcm_token)
                 logger.info(
-                    f"FCM token last uploaded more than 2 weeks ago. Re-subscribing to topic"
+                    "FCM token last uploaded more than 2 weeks ago. Re-subscribing to topic"
                 )
         else:
             subscribe_topic(fcm_token)
