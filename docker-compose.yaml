@@ -1,14 +1,17 @@
 services:
     camera-events-service:
+        image: camera-events-service
         build:
             dockerfile: ./Dockerfile
+            args:
+                - image=camera-events-service
         volumes:
-            - ./userdb.db:/app/userdb.db
             - camera_events_logs:/app/logs/
         networks:
             - datastorage
             - web
-        container_name: camera-events-service
+        ports:
+            - 8000:80
         #image: ghcr.io/blcoyote/camera-events-service:latest
         environment:
             - MAX_WORKERS=1
@@ -25,6 +28,7 @@ services:
             - traefik.http.routers.cameraevents.tls=true
             - traefik.http.routers.cameraevents.tls.certresolver=lets-encrypt
             - traefik.http.services.cameraevents.loadbalancer.server.port=80
+
     camera-events-redis:
         image: redis:latest
         container_name: camera-events-redis

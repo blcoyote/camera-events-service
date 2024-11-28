@@ -1,7 +1,7 @@
 import redis
 import uuid
 from loguru import logger
-
+from typing import List
 from lib.settings import get_settings
 
 redis_client = redis.Redis(host=get_settings().redis_host, password=get_settings().redis_password, port=6379, decode_responses=True)

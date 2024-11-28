@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from fastapi.responses import RedirectResponse
 from loguru import logger
 from database.redis_datastore import get_snapshot_id
-from lib.settings import get_settings
+
 from tasks.event_tasks import  get_placeholder, get_snapshot
 from starlette.responses import StreamingResponse
 
@@ -13,7 +13,6 @@ router = APIRouter(
     dependencies=[],
     responses={404: {"description": "Not found"}},
 )
-
 
 @router.get("/notification/{image_token}", status_code=200)
 async def read_event_latest(image_token: str):

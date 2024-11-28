@@ -12,11 +12,9 @@ def get_settings():
 class Settings(BaseSettings):
     model_config = ConfigDict(extra="allow")
     app_name: str = Field("Frigate API")
-    docs_url: str = Field(os.getenv("UVICORN_DOCS_LOCATION", ""))
+    docs_url: str = Field(os.getenv("UVICORN_DOCS_URL", ""))
     app_version: str = Field(os.getenv("UVICORN_APP_VERSION", ""))
     frigate_baseurl: str = Field(os.getenv("UVICORN_FRIGATE_BASEURL", ""))
-    secret_key: str = Field(os.getenv("UVICORN_SECRET_KEY", ""))
-    sqlalchemy_database_url: str = Field(os.getenv("UVICORN_DATABASE_URL", ""))
     web_url: str = Field(os.getenv("UVICORN_WEB_URL", ""))
     redis_host: str = Field(os.getenv("UVICORN_REDIS_URL", ""))
     redis_password: str = Field(os.getenv("UVICORN_REDIS_PASSWORD", ""))

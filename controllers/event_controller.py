@@ -14,7 +14,6 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-
 @router.get(
     "/",
     response_model=List[CameraEvent],

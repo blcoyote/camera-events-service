@@ -8,7 +8,6 @@ python-multipart==0.0.9
 python-jose[cryptography]==3.3.*
 passlib==1.7.*
 bcrypt==3.2.*
-SQLAlchemy==2.0.*
 asyncio==3.4.*
 firebase-admin==6.2.*
 redis[hiredis]==5.0.*

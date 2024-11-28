@@ -2,13 +2,11 @@ import asyncio
 from datetime import datetime
 from fastapi import FastAPI, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
-
 from firebase.firebase import get_firebase_app
 from lib.settings import get_settings
 from loguru import logger
-from database import  schema, database
 from contextlib import asynccontextmanager
-from tasks.event_polling import poll_for_new_events, check_for_stale_fcmtokens
+from tasks.event_polling import poll_for_new_events
 from controllers import (
     download_controller,
     fcm_controller,
@@ -16,15 +14,12 @@ from controllers import (
     event_controller,
 )
 
-schema.Base.metadata.create_all(bind=database.engine)
-
 logger.add(f"./logs/apilog_{datetime.now().strftime('%Y-%m-%d')}.log", rotation="1 day",
            colorize=False, format="{time:YYYY-MM-DD HH:mm:ss.SSS} | {level} | <level>{message}</level>")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     asyncio.create_task(poll_for_new_events())
-    asyncio.create_task(check_for_stale_fcmtokens())
     yield
 
 app = FastAPI(
