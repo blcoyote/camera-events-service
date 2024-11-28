@@ -26,6 +26,7 @@ async def fetch_and_process_events():
     try:
         events = get_events(params)
         # logger.info(f"Got {len(events)} events from api")
+        
         await process_events(events)
     except Exception as e:
         logger.error(f"Error getting events from api: {e}")

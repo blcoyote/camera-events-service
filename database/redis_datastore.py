@@ -1,7 +1,6 @@
 import redis
 import uuid
 from loguru import logger
-from typing import List
 from lib.settings import get_settings
 
 redis_client = redis.Redis(host=get_settings().redis_host, password=get_settings().redis_password, port=6379, decode_responses=True)
@@ -9,7 +8,8 @@ redis_client = redis.Redis(host=get_settings().redis_host, password=get_settings
 @logger.catch
 def set_temporary_image_token(snapshot_id: str, expire:int = 60*60*24) -> str: 
     generated_uuid = str(uuid.uuid4())
-    redis_client.set(generated_uuid, snapshot_id, ex=expire)  # redis entry expires in 24 hours by default
+    redis_client.set(generated_uuid, snapshot_id, ex=expire)
+    # redis entry expires in 24 hours by default
     return generated_uuid
 
 @logger.catch
