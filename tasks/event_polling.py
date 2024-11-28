@@ -4,7 +4,7 @@ from loguru import logger
 from datetime import datetime, timedelta
 from firebase.firebase import send_multiple_topic_push, send_topic_push
 from tasks.event_tasks import get_events
-from models.event_model import CameraEvent, CameraEventQueryParams, CameraNotification, WsEventType, WebsocketEvent
+from models.event_model import CameraEvent, CameraEventQueryParams
 
 POLLING_INTERVAL = 30
 
