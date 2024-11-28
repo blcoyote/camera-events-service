@@ -2,6 +2,7 @@ import asyncio
 from datetime import datetime
 from fastapi import FastAPI, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from firebase.firebase import get_firebase_app
 from lib.settings import get_settings
 from loguru import logger
@@ -46,7 +47,7 @@ app.include_router(event_controller.router)
 app.include_router(fcm_controller.router)
 app.include_router(notification_controller.router)
 
-
+app.mount("/www", StaticFiles(directory="static"), name="static")
 
 logger.info("Starting Frigate API...")
 firebase_App = get_firebase_app()
