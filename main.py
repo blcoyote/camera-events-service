@@ -31,12 +31,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Active routes (firebase auth)
-app.include_router(download_controller.router)
-app.include_router(event_controller.router)
-app.include_router(fcm_controller.router)
-app.include_router(notification_controller.router)
-
+# CORS - change this when frontend is intefrated
 app.add_middleware(
     CORSMiddleware,
     allow_origins=['*'],
@@ -44,6 +39,14 @@ app.add_middleware(
     allow_methods=['*'],
     allow_headers=['*'],
 )
+
+# Active routes (firebase auth)
+app.include_router(download_controller.router)
+app.include_router(event_controller.router)
+app.include_router(fcm_controller.router)
+app.include_router(notification_controller.router)
+
+
 
 logger.info("Starting Frigate API...")
 firebase_App = get_firebase_app()
