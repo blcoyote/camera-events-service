@@ -1,24 +1,24 @@
-version: '3.8'
 services:
     camera-events-service:
+        build:
+            dockerfile: ./Dockerfile
         volumes:
-            - /volume1/docker/cameraevents/userdb.db:/app/userdb.db
-            - /volume1/docker/cameraevents/logs/:/app/logs/
+            - ./userdb.db:/app/userdb.db
+            - camera_events_logs:/app/logs/
         networks:
             - datastorage
             - web
         container_name: camera-events-service
-        image: ghcr.io/blcoyote/camera-events-service:latest
+        #image: ghcr.io/blcoyote/camera-events-service:latest
         environment:
             - MAX_WORKERS=1
             - UVICORN_APP_VERSION=0.0.3
             - UVICORN_FRIGATE_BASEURL=$UVICORN_FRIGATE_BASEURL
-            - UVICORN_SERET_KEY=$UVICORN_SERET_KEY
             - UVICORN_DATABASE_URL=$UVICORN_DATABASE_URL
             - UVICORN_DOCS_URL=$UVICORN_DOCS_URL
             - UVICORN_FIREBASE_CREDENTIALS=$UVICORN_FIREBASE_CREDENTIALS
             - UVICORN_WEB_URL=$UVICORN_WEB_URL
-            - UVICORN_REDIS_URL=$UVICORN_REDIS_URL
+            - UVICORN_REDIS_URL=camera-events-redis
             - UVICORN_REDIS_PASSWORD=$REDIS_PASSWORD
         labels:
             - traefik.http.routers.cameraevents.rule=Host(`$DNS_NAME`)
@@ -26,7 +26,7 @@ services:
             - traefik.http.routers.cameraevents.tls.certresolver=lets-encrypt
             - traefik.http.services.cameraevents.loadbalancer.server.port=80
     camera-events-redis:
-        image: redis:7.2.4-alpine
+        image: redis:latest
         container_name: camera-events-redis
         restart: always
         ports:
@@ -35,7 +35,7 @@ services:
             - datastorage
             - web
         volumes:
-            - /volume1/docker/redis:/root/redis
+            - camera_events_redis:/root/redis
         environment:
             - REDIS_PASSWORD=$REDIS_PASSWORD
             - REDIS_PORT=6379
@@ -46,8 +46,17 @@ services:
             - redis-server --requirepass $${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}
 networks:
     web:
-        name: web
-        external: true
+        name: camera_events_web
     datastorage:
-        name: datastorage
-        external: true
+        name: camera_events_datastorage
+
+volumes:
+    camera_events_redis:
+        name: camera_events_redis
+        driver: local
+    camera_events_fcmstore:
+        name: camera_events_fcmstore
+        driver: local
+    camera_events_logs:
+        name: camera_events_logs
+        driver: local
