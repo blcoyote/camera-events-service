@@ -8,7 +8,9 @@ redis_client = redis.Redis(host=get_settings().redis_host, password=get_settings
 @logger.catch
 def set_temporary_image_token(snapshot_id: str, expire:int = 60*60*24) -> str: 
     generated_uuid = str(uuid.uuid4())
+    logger.info("Setting image token {generated_uuid} for snapshot {snapshot_id}")
     redis_client.set(generated_uuid, snapshot_id, ex=expire)
+    logger.info("Image token set")
     # redis entry expires in 24 hours by default
     return generated_uuid
 
