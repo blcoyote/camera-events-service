@@ -9,6 +9,7 @@ from loguru import logger
 from contextlib import asynccontextmanager
 from tasks.event_polling import poll_for_new_events
 from controllers import (
+    config_controller,
     download_controller,
     fcm_controller,
     notification_controller,
@@ -46,8 +47,9 @@ app.include_router(download_controller.router)
 app.include_router(event_controller.router)
 app.include_router(fcm_controller.router)
 app.include_router(notification_controller.router)
+app.include_router(config_controller.router)
 
-app.mount("/www", StaticFiles(directory="static"), name="static")
+app.mount("/", StaticFiles(directory="www"), name="www")
 
 logger.info("Starting Frigate API...")
 firebase_App = get_firebase_app()

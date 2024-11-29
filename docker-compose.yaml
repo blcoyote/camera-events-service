@@ -23,6 +23,14 @@ services:
             - UVICORN_WEB_URL=$UVICORN_WEB_URL
             - UVICORN_REDIS_URL=camera-events-redis
             - UVICORN_REDIS_PASSWORD=$REDIS_PASSWORD
+            - UVICORN_FIREBASE_APIKEY=$UVICORN_FIREBASE_APIKEY
+            - UVICORN_AUTHDOMAIN=$UVICORN_AUTHDOMAIN
+            - UVICORN_PROJECTID=$UVICORN_PROJECTID
+            - UVICORN_STORAGEBUCKET=$UVICORN_STORAGEBUCKET
+            - UVICORN_MESSAGESENDERID=$UVICORN_MESSAGESENDERID
+            - UVICORN_APPID=$UVICORN_APPID
+            - UVICORN_MEASUREMENTID=$UVICORN_MEASUREMENTID
+            - UVICORN_MESSAGINGKEY=$UVICORN_MESSAGINGKEY
         labels:
             - traefik.http.routers.cameraevents.rule=Host(`$DNS_NAME`)
             - traefik.http.routers.cameraevents.tls=true
