@@ -9,3 +9,4 @@ serviceAccountKey.json
 *.pyc
 pushtest.py
 venv/
+.venv
