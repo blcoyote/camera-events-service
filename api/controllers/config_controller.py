@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-
-from lib.app_config import FrontEndConfig, get_app_config
+from models.app_config_model import AppConfigModel
+from lib.app_config import get_app_config
 
 router = APIRouter(
     prefix="/api/v1",
@@ -9,7 +9,7 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-@router.get("/application-configuration", status_code=200, response_model=FrontEndConfig)
+@router.get("/application-configuration", status_code=200, response_model=AppConfigModel)
 async def get_application_configuration():
     return get_app_config()
 
